@@ -1,24 +1,46 @@
 import json
+import os
+import logging
+import urllib
+
+# Grab the Bot OAuth token from the environment.
+BOT_TOKEN = os.environ["BOT_TOKEN"]
+
+SLACK_URL = "https://slack.com/api/chat.postMessage"
 
 
 def handle_miss_ping(event, context):
-    body = {
-        "message": "Hello slack! We are ready for pingo pong!",
-        "input": event
-    }
+    slack_event = event['event']
+    text = slack_event['text']
+    channel_id = slack_event["channel"]
 
-    response = {
-        "statusCode": 200,
-        "body": json.dumps(body)
-    }
+    data = urllib.parse.urlencode(
+        (
+            ("token", BOT_TOKEN),
+            ("channel", channel_id),
+            ("text", text)
+        )
+    )
+    data = data.encode("ascii")
+    request = urllib.request.Request(
+        SLACK_URL,
+        data=data,
+        method="POST"
+    )
 
-    return response
+    urllib.request.urlopen(request).read()
 
-    # Use this code if you don't use the http event with the LAMBDA-PROXY
-    # integration
-    """
-    return {
-        "message": "Go Serverless v1.0! Ready forn pingo pong",
-        "event": event
-    }
-    """
+    return "200 OK"
+
+    # body = {
+    #     "message": "Hello slack! We are ready for pingo pong!",
+    #     "input": event
+    # }
+    #
+    # response = {
+    #     "statusCode": 200,
+    #     "body": json.dumps(body)
+    # }
+    #
+    # return response
+
