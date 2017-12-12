@@ -4,12 +4,13 @@ import logging
 import urllib
 
 # Grab the Bot OAuth token from the environment.
-BOT_TOKEN = os.environ["BOT_TOKEN"]
+BOT_TOKEN = "xoxb-286531350151-MFLesbsehzDsxmnybsYqJQCo"
 
 SLACK_URL = "https://slack.com/api/chat.postMessage"
 
 
 def handle_miss_ping(event, context):
+    print(event)
     slack_event = event['event']
     text = slack_event['text']
     channel_id = slack_event["channel"]
