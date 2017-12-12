@@ -36,8 +36,8 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
-    handler: handler.hello
+  handle_miss_ping:
+    handler: handler.handle_miss_ping
 
   reader:   # function reader subscribes to read_from_bot topic
     handler: reader.read_from_bot
@@ -53,3 +53,7 @@ functions:
         topicName: write_to_bot
         displayName: Messages to write to slack channel
 
+  index:
+    handler: handler.handle_miss_ping
+    events:
+      - http: GET miss-ping-handler

@@ -1,9 +1,9 @@
 import json
 
 
-def hello(event, context):
+def handle_miss_ping(event, context):
     body = {
-        "message": "Go Serverless v1.0! Ready forn pingo pong!",
+        "message": "Hello slack! We are ready for pingo pong!",
         "input": event
     }
 
