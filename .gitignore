@@ -1,2 +1,4 @@
 .idea
 .serverless
+vendored/
+node_modules/
