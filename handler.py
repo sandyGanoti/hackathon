@@ -44,16 +44,23 @@ def handle_miss_ping(event, context):
 
     sns_client = boto3.client('sns')
 
+    sc = SlackClient(BOT_TOKEN)
     if text.upper() in COMMANDS:
-        responseFromSns = sns_client.publish(
-            # TargetArn=arn,
-            # Message=json.dumps({'default': json.dumps(message)}),
-            # MessageStructure='json'
-            TopicArn=COMMANDS[text],
-            Message=json.dumps(event)
+        userInfo = sc.api_call(
+            "users.info",
+            user=user
         )
+
+        userInfo["ok"]
+        if userInfo["ok"] == "true":
+            responseFromSns = sns_client.publish(
+                # TargetArn=arn,
+                # Message=json.dumps({'default': json.dumps(message)}),
+                # MessageStructure='json'
+                TopicArn=COMMANDS[text.upper()],
+                Message=json.dumps(userInfo["user"]["name"])
+            )
     else:
-        sc = SlackClient(BOT_TOKEN)
         response = sc.api_call(
             "chat.postMessage",
             channel=PING_PONG_CHANNEL,
