@@ -45,8 +45,8 @@ functions:
   handle_miss_ping:
     handler: handler.handle_miss_ping
 
-  reader:   # function reader subscribes to read_from_bot topic
-    handler: reader.read_from_bot
+  reader:   # create a new SNS topic with the name read_from_bot and bound it to reader method
+    handler: reader.read_from_bot # the method will be called every time a message is sent to the read_from_bot topic
     events:
       - sns:
         topicName: read_from_bot

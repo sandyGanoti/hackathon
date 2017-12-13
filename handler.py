@@ -1,6 +1,7 @@
 import json
 import os
 import logging
+import boto3
 
 # Grab the Bot OAuth token from the environment.
 
@@ -19,18 +20,34 @@ def handle_miss_ping(event, context):
         return event["challenge"]
 
     slack_event = event['event']
-    text = slack_event['text']
-    channel_id = slack_event["channel"]
-
     if "bot_id" in slack_event:
         return
 
-    sc = SlackClient(BOT_TOKEN)
+    text = slack_event['text']
+    channel_id = slack_event['channel']
+    user = slack_event['user']
+    response_text = 'Hi @{} :wave:'.format(user)
+    # todo : https://api.slack.com/methods/users.list
 
-    response = sc.api_call(
-        "chat.postMessage",
-        channel=BOT_ID,
-        text=text,
+    sns_client = boto3.client('sns')
+    topic = sns_client.create_topic(Name="read_from_bot")
+    topic_arn = topic['TopicArn']
+
+    responseFromSns = sns_client.publish(
+        # TargetArn=arn,
+        # Message=json.dumps({'default': json.dumps(message)}),
+        # MessageStructure='json'
+        TopicArn=topic_arn,
+        Message=event
     )
-    return response
+    return
+
+
+    # sc = SlackClient(BOT_TOKEN)
+    # response = sc.api_call(
+    #     "chat.postMessage",
+    #     channel=BOT_ID,
+    #     text=response_text,
+    # )
+    # return response
 
