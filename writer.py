@@ -1,7 +1,7 @@
 import json
 
 
-def write_from_bot(event, context):
+def write_to_bot(event, context):
     body = {
         "message": "I am going to write to slack channel",
         "input": event

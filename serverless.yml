@@ -34,6 +34,12 @@ provider:
 #  exclude:
 #    - exclude-me.py
 #    - exclude-me-dir/**
+package:
+  exclude:
+    - .node_modules/**
+
+plugins:
+  - serverless-python-requirements
 
 functions:
   handle_miss_ping:
@@ -52,6 +58,9 @@ functions:
       - sns:
         topicName: write_to_bot
         displayName: Messages to write to slack channel
+
+  neo4j_write:
+    handler: neo4j_writer.write
 
   index:
     handler: handler.handle_miss_ping
