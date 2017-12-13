@@ -1,11 +1,4 @@
-from neo4j.v1 import GraphDatabase
-
-
-class Neo4jRepository:
-    def __init__(self, db_instance_ip, db_user, db_password):
-        uri = "bolt://{}".format(db_instance_ip)
-        driver = GraphDatabase.driver(uri, auth=(db_user, db_password))
-        self.driver = driver
+from neo4j_repo import Neo4jRepository
 
 
 class UserRepository(Neo4jRepository):
@@ -36,10 +29,6 @@ class UserRepository(Neo4jRepository):
         result = tx.run("MATCH (u:User) "
                         "WHERE u.name = $user_name "
                         "RETURN u", user_name=user_name)
+
+        print("event: {}".format(result.single()))
         return result.single()["u"]["name"] if result and result.single() and result.single()["u"] else None
-
-
-class GameRepository(Neo4jRepository):
-
-    def create_game(self):
-        return

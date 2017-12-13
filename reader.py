@@ -2,7 +2,6 @@ from __future__ import print_function
 import json
 import os
 from slackclient import SlackClient
-import logging
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 BOT_NAME = "Miss Ping"
