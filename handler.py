@@ -60,6 +60,8 @@ def handle_miss_ping(event, context):
                 TopicArn=COMMANDS[text.upper()],
                 Message=json.dumps(userInfo["user"]["name"])
             )
+            print("response from SNS: {}".format(responseFromSns))
+            return responseFromSns
     else:
         response = sc.api_call(
             "chat.postMessage",
@@ -67,9 +69,5 @@ def handle_miss_ping(event, context):
             text="Parse error :grimacing:",
         )
         return response
-
-    print("response from SNS: {}".format(responseFromSns))
-
-    return responseFromSns
 
 
