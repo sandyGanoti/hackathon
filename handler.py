@@ -46,6 +46,9 @@ def handle_miss_ping(event, context):
 
     sns_client = boto3.client('sns')
 
+    # todo use dict
+    # todo use toUpper
+    the_Dict = {COMMAND_WANT_TO_PLAY: ARN_WANT_TO_PLAY}
     if text == COMMAND_WANT_TO_PLAY:
         topic_arn = ARN_WANT_TO_PLAY
     elif text == COMMAND_IS_MATCH_FINISHED:
