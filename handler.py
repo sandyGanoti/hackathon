@@ -6,7 +6,8 @@ import logging
 
 from slackclient import SlackClient
 BOT_TOKEN = os.environ["BOT_TOKEN"]
-
+BOT_NAME = "Miss Ping"
+BOT_ID = "C8E4EUGGM"
 
 SLACK_URL = "https://slack.com/api/chat.postMessage"
 
@@ -14,9 +15,8 @@ SLACK_URL = "https://slack.com/api/chat.postMessage"
 def handle_miss_ping(event, context):
     print(event)
 
-    if "body" in event:
-        if "challenge" in event["body"]:
-            return event["body"]["challenge"]
+    if "challenge" in event:
+        return event["challenge"]
 
     slack_event = event['event']
     text = slack_event['text']
@@ -29,7 +29,7 @@ def handle_miss_ping(event, context):
 
     response = sc.api_call(
         "chat.postMessage",
-        channel=channel_id,
+        channel=BOT_ID,
         text=text,
     )
     return response
