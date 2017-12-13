@@ -18,6 +18,11 @@ ARN_WANT_TO_PLAY = "arn:aws:sns:us-east-1:580803390928:request_want_to_play"
 ARN_IS_MATCH_FINISHED = "arn:aws:sns:us-east-1:580803390928:request_is_match_finished"
 ARN_CURRENT_GAME = "arn:aws:sns:us-east-1:580803390928:request_current_game"
 
+ARN_RES_WANT_TO_PLAY = "arn:aws:sns:us-east-1:580803390928:response_want_to_play"
+ARN_RES_IS_MATCH_FINISHED = "arn:aws:sns:us-east-1:580803390928:response_is_match_finished"
+ARN_RES_CURRENT_GAME = "arn:aws:sns:us-east-1:580803390928:response_current_game"
+
+
 COMMAND_WANT_TO_PLAY = ":table_tennis_paddle_and_ball:"
 COMMAND_IS_MATCH_FINISHED = "Is current game finished?"
 COMMAND_CURRENT_GAME = "Who are playing now?"
