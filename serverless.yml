@@ -67,4 +67,4 @@ functions:
   index:
     handler: handler.handle_miss_ping
     events:
-      - http: POST handle_miss_ping
+      - http: POST miss-ping-handler
