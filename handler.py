@@ -3,9 +3,10 @@ import os
 import logging
 
 # Grab the Bot OAuth token from the environment.
-from slackclient import SlackClient
 
-BOT_TOKEN = "xoxb-286531350151-MFLesbsehzDsxmnybsYqJQCo"
+from slackclient import SlackClient
+BOT_TOKEN = os.environ["BOT_TOKEN"]
+
 
 SLACK_URL = "https://slack.com/api/chat.postMessage"
 
