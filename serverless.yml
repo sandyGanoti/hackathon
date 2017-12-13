@@ -62,7 +62,9 @@ functions:
   neo4j_write:
     handler: neo4j_writer.write
 
+# this setup specifies that the handle_miss_ping function should be run
+# when someone acesses the APi Gateway at miss-ping-handler via a POST request
   index:
     handler: handler.handle_miss_ping
     events:
-      - http: POST miss-ping-handler
+      - http: POST handle_miss_ping
