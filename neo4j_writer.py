@@ -15,7 +15,7 @@ def write(event, context):
             db_password=NEO4J_PASSWORD
         )
 
-        user = repository.get_or_create_user(event["user"])
+        user = repository.get_or_create_player(event["user"])
         return {
             "statusCode": 200,
             "body": user

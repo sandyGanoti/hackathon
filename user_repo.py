@@ -3,32 +3,33 @@ from neo4j_repo import Neo4jRepository
 
 class UserRepository(Neo4jRepository):
 
-    def find_user(self, user_name):
+    def find_player(self, user_name):
         with self.driver.session() as session:
-            user = session.read_transaction(self._find_user, user_name)
+            user = session.read_transaction(self._find_player, user_name)
             return user
 
-    def create_user(self, user_name):
+    def create_player(self, user_name):
         with self.driver.session() as session:
-            user = session.write_transaction(self._create_and_return_user, user_name)
+            user = session.write_transaction(self._create_and_return_player, user_name)
             return user
 
-    def get_or_create_user(self, user_name):
-        existing_user = self.find_user(user_name)
-        return existing_user if existing_user else self.create_user(user_name)
+    def get_or_create_player(self, user_name):
+        existing_user = self.find_player(user_name)
+        return existing_user if existing_user else self.create_player(user_name)
 
     @staticmethod
-    def _create_and_return_user(tx, user_name):
-        result = tx.run("CREATE (u:User) "
-                        "SET u.name = $user_name "
-                        "RETURN u", user_name=user_name)
-        return result.single()["u"]["name"]
+    def _create_and_return_player(tx, user_name):
+        result = tx.run("CREATE (p:Player) "
+                        "SET p.name = $player_name "
+                        "RETURN p", player_name=user_name)
+        return result.single()["p"]["name"]
 
     @staticmethod
-    def _find_user(tx, user_name):
-        result = tx.run("MATCH (u:User) "
-                        "WHERE u.name = $user_name "
-                        "RETURN u", user_name=user_name)
+    def _find_player(tx, user_name):
+        result = tx.run("MATCH (p:Player) "
+                        "WHERE p.name = $player_name "
+                        "RETURN p", player_name=user_name)
 
-        print("event: {}".format(result.single()))
-        return result.single()["u"]["name"] if result and result.single() and result.single()["u"] else None
+        single_result = result.single()
+        print("event: {}".format(single_result))
+        return single_result["p"]["name"] if single_result else None
