@@ -1,7 +1,7 @@
 from neo4j_repo import Neo4jRepository
 
 
-class UserRepository(Neo4jRepository):
+class PlayerRepository(Neo4jRepository):
 
     def find_player(self, user_name):
         with self.driver.session() as session:
