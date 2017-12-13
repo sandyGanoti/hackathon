@@ -17,9 +17,9 @@ class GameRepository(Neo4jRepository):
             success = session.write_transaction(self._join_game, game_id, player_name)
         return success
 
-    def get_current_game(self):
+    def get_players_from_current_game(self):
         with self.driver.session() as session:
-            game = session.read_transaction(self._get_current_game)
+            game = session.read_transaction(self._get_players_from_current_game)
         return game
 
     def finish_current_game(self, player_name):
@@ -51,18 +51,19 @@ class GameRepository(Neo4jRepository):
 
     @staticmethod
     def _get_available_game(tx):
-        result = tx.run("Match (g:Game)<-[r:PARTICIPATES]-(o:Player) "
+        result = tx.run("MATCH (g:Game)<-[r:PARTICIPATES]-(o:Player) "
                         "WITH count(o) num_of_players "
                         "WHERE num_of_players < 2 "
                         "RETURN g")
         return result.single()["g"] if result.single() else None
 
     @staticmethod
-    def _get_current_game(tx):
-        result = tx.run("CREATE (g:Game) "
+    def _get_players_from_current_game(tx):
+        result = tx.run("MATCH (g:Game)<-[r:PARTICIPATES]-(p:Player) "
                         "WHERE g.current = true "
-                        "RETURN g")
-        return result.single()["g"] if result.single() else None
+                        "RETURN p")
+        results = result.records()
+        return [result["p"]["name"] for result in results]
 
     @staticmethod
     def _finish_game(tx, player_name):
