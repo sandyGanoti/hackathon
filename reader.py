@@ -1,19 +1,22 @@
+from __future__ import print_function
 import json
 import os
 from slackclient import SlackClient
+import logging
 
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 BOT_NAME = "Miss Ping"
-BOT_ID = "C8E4EUGGM"
+PING_PONG_CHANNEL = "C8E4EUGGM"
 
 
 def read_from_bot(event, context):
-    print(event)
+    print("event: {}".format(event))
+    sns_message = json.loads(event["Records"][0]["Sns"]["Message"])
 
-    if "challenge" in event:
-        return event["challenge"]
+    if "challenge" in sns_message:
+        return sns_message["challenge"]
 
-    slack_event = event['event']
+    slack_event = sns_message['event']
     if "bot_id" in slack_event:
         return
 
@@ -24,7 +27,7 @@ def read_from_bot(event, context):
     sc = SlackClient(BOT_TOKEN)
     response = sc.api_call(
         "chat.postMessage",
-        channel=BOT_ID,
+        channel=PING_PONG_CHANNEL,
         text=text,
     )
     return response

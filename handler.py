@@ -1,3 +1,4 @@
+from __future__ import print_function
 import json
 import os
 import logging
@@ -30,17 +31,18 @@ def handle_miss_ping(event, context):
     # todo : https://api.slack.com/methods/users.list
 
     sns_client = boto3.client('sns')
-    topic = sns_client.create_topic(Name="read_from_bot")
-    topic_arn = topic['TopicArn']
+    topic_arn = "arn:aws:sns:us-east-1:580803390928:read_from_bot"
 
     responseFromSns = sns_client.publish(
         # TargetArn=arn,
         # Message=json.dumps({'default': json.dumps(message)}),
         # MessageStructure='json'
         TopicArn=topic_arn,
-        Message=event
+        Message=json.dumps(event)
     )
-    return
+    print("response from SNS: {}".format(responseFromSns))
+
+    return responseFromSns
 
 
     # sc = SlackClient(BOT_TOKEN)
