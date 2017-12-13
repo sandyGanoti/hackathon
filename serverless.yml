@@ -52,6 +52,13 @@ functions:
         topicName: request_want_to_play
         displayName: Messages to read from slack channel for want to play command
 
+  res_want_to_play:
+    handler: res_want_to_play.response_want_to_play
+    events:
+      - sns:
+        topicName: response_want_to_play
+        displayName: Messages to read from db for want to play command
+
   is_match_finished:
     handler: is_match_finished.request_is_match_finished
     events:
@@ -59,12 +66,26 @@ functions:
         topicName: request_is_match_finished
         displayName: Messages to read from slack channel for is current game finished command
 
+  res_is_match_finished:
+    handler: res_is_match_finished.response_is_match_finished
+    events:
+      - sns:
+        topicName: response_is_match_finished
+        displayName: Messages to read from db for is current game finished command
+
   current_game:
     handler: current_game.request_current_game
     events:
       - sns:
         topicName: request_current_game
-        displayName: Messages to read from slack channel for is current game finished command
+        displayName: Messages to read from slack channel for current game command
+
+  res_current_game:
+    handler: res_current_game.response_current_game
+    events:
+      - sns:
+        topicName: response_current_game
+        displayName: Messages to read from db for current game command
 
   neo4j_write:
     handler: neo4j_writer.write
