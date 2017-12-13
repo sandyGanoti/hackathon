@@ -51,7 +51,9 @@ def handle_miss_ping(event, context):
             user=user
         )
 
-        userInfo["ok"]
+        print(userInfo["ok"])
+        print(userInfo["name"])
+
         if userInfo["ok"] == "true":
             responseFromSns = sns_client.publish(
                 # TargetArn=arn,
