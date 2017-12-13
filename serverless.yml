@@ -45,22 +45,30 @@ functions:
   handle_miss_ping:
     handler: handler.handle_miss_ping
 
-  reader:   # create a new SNS topic with the name read_from_bot and bound it to reader method
-    handler: reader.read_from_bot # the method will be called every time a message is sent to the read_from_bot topic
+  want_to_play:
+    handler: want_to_play.request_want_to_play
     events:
       - sns:
-        topicName: read_from_bot
-        displayName: Messages to read from slack channel
+        topicName: request_want_to_play
+        displayName: Messages to read from slack channel for want to play command
 
-  writer:  # function writer subscribes to write_to_bot topic
-    handler: writer.write_to_bot
+  is_match_finished:
+    handler: is_match_finished.request_is_match_finished
     events:
       - sns:
-        topicName: write_to_bot
-        displayName: Messages to write to slack channel
+        topicName: request_is_match_finished
+        displayName: Messages to read from slack channel for is current game finished command
+
+  current_game:
+    handler: current_game.request_current_game
+    events:
+      - sns:
+        topicName: request_current_game
+        displayName: Messages to read from slack channel for is current game finished command
 
   neo4j_write:
     handler: neo4j_writer.write
+
 
 # this setup specifies that the handle_miss_ping function should be run
 # when someone acesses the APi Gateway at miss-ping-handler via a POST request

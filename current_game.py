@@ -8,7 +8,7 @@ BOT_NAME = "Miss Ping"
 PING_PONG_CHANNEL = "C8E4EUGGM"
 
 
-def read_from_bot(event, context):
+def request_current_game(event, context):
     print("event: {}".format(event))
     sns_message = json.loads(event["Records"][0]["Sns"]["Message"])
 

@@ -9,9 +9,18 @@ import boto3
 from slackclient import SlackClient
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 BOT_NAME = "Miss Ping"
-BOT_ID = "C8E4EUGGM"
+PING_PONG_CHANNEL = "C8E4EUGGM"
 
 SLACK_URL = "https://slack.com/api/chat.postMessage"
+
+# topic arn
+ARN_WANT_TO_PLAY = "arn:aws:sns:us-east-1:580803390928:request_want_to_play"
+ARN_IS_MATCH_FINISHED = "arn:aws:sns:us-east-1:580803390928:request_is_match_finished"
+ARN_CURRENT_GAME = "arn:aws:sns:us-east-1:580803390928:request_current_game"
+
+COMMAND_WANT_TO_PLAY = ":table_tennis_paddle_and_ball:"
+COMMAND_IS_MATCH_FINISHED = "Is current game finished?"
+COMMAND_CURRENT_GAME = "Who are playing now?"
 
 
 def handle_miss_ping(event, context):
@@ -27,11 +36,25 @@ def handle_miss_ping(event, context):
     text = slack_event['text']
     channel_id = slack_event['channel']
     user = slack_event['user']
-    response_text = 'Hi @{} :wave:'.format(user)
+    response_text = 'Hi @{} :wave:'.format(user) #TODO: remove?
     # todo : https://api.slack.com/methods/users.list
 
     sns_client = boto3.client('sns')
-    topic_arn = "arn:aws:sns:us-east-1:580803390928:read_from_bot"
+
+    if text == COMMAND_WANT_TO_PLAY:
+        topic_arn = ARN_WANT_TO_PLAY
+    elif text == COMMAND_IS_MATCH_FINISHED:
+        topic_arn = ARN_IS_MATCH_FINISHED
+    elif text == COMMAND_CURRENT_GAME:
+        topic_arn = COMMAND_CURRENT_GAME
+    else:
+        sc = SlackClient(BOT_TOKEN)
+        response = sc.api_call(
+            "chat.postMessage",
+            channel=PING_PONG_CHANNEL,
+            text="Parse error :grimacing:",
+        )
+        return response
 
     responseFromSns = sns_client.publish(
         # TargetArn=arn,
@@ -44,12 +67,4 @@ def handle_miss_ping(event, context):
 
     return responseFromSns
 
-
-    # sc = SlackClient(BOT_TOKEN)
-    # response = sc.api_call(
-    #     "chat.postMessage",
-    #     channel=BOT_ID,
-    #     text=response_text,
-    # )
-    # return response
 

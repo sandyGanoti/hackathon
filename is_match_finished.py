@@ -1,7 +1,7 @@
 import json
 
 
-def write_to_bot(event, context):
+def request_is_match_finished(event, context):
     body = {
         "message": "I am going to write to slack channel",
         "input": event
