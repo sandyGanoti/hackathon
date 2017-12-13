@@ -36,7 +36,7 @@ class UserRepository(Neo4jRepository):
         result = tx.run("MATCH (u:User) "
                         "WHERE u.name = $user_name "
                         "RETURN u", user_name=user_name)
-        return result.single()["u"]["name"] if result.single() else None
+        return result.single()["u"]["name"] if result and result.single() and result.single()["u"] else None
 
 
 class GameRepository(Neo4jRepository):
