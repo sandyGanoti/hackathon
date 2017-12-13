@@ -21,9 +21,10 @@ def handle_miss_ping(event, context):
 
     sc = SlackClient(BOT_TOKEN)
 
-    sc.api_call(
+    response = sc.api_call(
         "chat.postMessage",
         channel=channel_id,
         text=text,
     )
+    return response
 
