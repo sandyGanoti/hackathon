@@ -14,18 +14,16 @@ PING_PONG_CHANNEL = "C8E4EUGGM"
 SLACK_URL = "https://slack.com/api/chat.postMessage"
 
 # topic arn
-ARN_WANT_TO_PLAY = "arn:aws:sns:us-east-1:580803390928:request_want_to_play"
-ARN_IS_MATCH_FINISHED = "arn:aws:sns:us-east-1:580803390928:request_is_match_finished"
-ARN_CURRENT_GAME = "arn:aws:sns:us-east-1:580803390928:request_current_game"
 
 ARN_RES_WANT_TO_PLAY = "arn:aws:sns:us-east-1:580803390928:response_want_to_play"
 ARN_RES_IS_MATCH_FINISHED = "arn:aws:sns:us-east-1:580803390928:response_is_match_finished"
 ARN_RES_CURRENT_GAME = "arn:aws:sns:us-east-1:580803390928:response_current_game"
 
-
-COMMAND_WANT_TO_PLAY = ":table_tennis_paddle_and_ball:"
-COMMAND_IS_MATCH_FINISHED = "Is current game finished?"
-COMMAND_CURRENT_GAME = "Who are playing now?"
+COMMANDS = {
+    ":TABLE_TENNIS_PADDLE_AND_BALL:": "arn:aws:sns:us-east-1:580803390928:request_want_to_play",
+    "IS CURRENT GAME FINISHED?": "arn:aws:sns:us-east-1:580803390928:request_is_match_finished",
+    "WHO ARE PLAYING NOW?": "arn:aws:sns:us-east-1:580803390928:request_current_game"
+}
 
 
 def handle_miss_ping(event, context):
@@ -46,12 +44,14 @@ def handle_miss_ping(event, context):
 
     sns_client = boto3.client('sns')
 
-    if text == COMMAND_WANT_TO_PLAY:
-        topic_arn = ARN_WANT_TO_PLAY
-    elif text == COMMAND_IS_MATCH_FINISHED:
-        topic_arn = ARN_IS_MATCH_FINISHED
-    elif text == COMMAND_CURRENT_GAME:
-        topic_arn = COMMAND_CURRENT_GAME
+    if text.upper() in COMMANDS:
+        responseFromSns = sns_client.publish(
+            # TargetArn=arn,
+            # Message=json.dumps({'default': json.dumps(message)}),
+            # MessageStructure='json'
+            TopicArn=COMMANDS[text],
+            Message=json.dumps(event)
+        )
     else:
         sc = SlackClient(BOT_TOKEN)
         response = sc.api_call(
@@ -61,13 +61,6 @@ def handle_miss_ping(event, context):
         )
         return response
 
-    responseFromSns = sns_client.publish(
-        # TargetArn=arn,
-        # Message=json.dumps({'default': json.dumps(message)}),
-        # MessageStructure='json'
-        TopicArn=topic_arn,
-        Message=json.dumps(event)
-    )
     print("response from SNS: {}".format(responseFromSns))
 
     return responseFromSns
