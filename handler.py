@@ -14,8 +14,9 @@ SLACK_URL = "https://slack.com/api/chat.postMessage"
 def handle_miss_ping(event, context):
     print(event)
 
-    if "challenge" in event["body"]:
-        return event["body"]["challenge"]
+    if "body" in event:
+        if "challenge" in event["body"]:
+            return event["body"]["challenge"]
 
     slack_event = event['event']
     text = slack_event['text']
