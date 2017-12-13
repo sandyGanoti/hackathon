@@ -1,12 +1,15 @@
 import json
+import os
 from neo4j.v1 import GraphDatabase
+
+NEO4J_EC2_IP = os.environ["NEO4J_EC2_IP"]
+NEO4J_USER = os.environ["NEO4J_USER"]
+NEO4J_PASSWORD = os.environ["NEO4J_PASSWORD"]
 
 
 def write(event, context):
-    uri = "bolt://10.8.48.244:7687"
-    user = "neo4j"
-    password = "MissP!ng"
-    driver = GraphDatabase.driver(uri, auth=(user, password))
+    uri = "bolt://{}".format(NEO4J_EC2_IP)
+    driver = GraphDatabase.driver(uri, auth=(NEO4J_USER, NEO4J_PASSWORD))
     with driver.session() as session:
         greeting = session.write_transaction(_create_and_return_greeting, "hello")
         return {
