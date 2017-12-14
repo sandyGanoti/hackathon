@@ -18,11 +18,13 @@ SLACK_URL = "https://slack.com/api/chat.postMessage"
 ARN_RES_WANT_TO_PLAY = "arn:aws:sns:us-east-1:580803390928:response_want_to_play"
 ARN_RES_IS_MATCH_FINISHED = "arn:aws:sns:us-east-1:580803390928:response_is_match_finished"
 ARN_RES_CURRENT_GAME = "arn:aws:sns:us-east-1:580803390928:fd-sls-dev-response_current_game"
+ARN_RES_NEXT_GAME = "arn:aws:sns:us-east-1:580803390928:response_next_game"
 
 COMMANDS = {
     ":TABLE_TENNIS_PADDLE_AND_BALL:": "arn:aws:sns:us-east-1:580803390928:request_want_to_play",
     "IS CURRENT GAME FINISHED?": "arn:aws:sns:us-east-1:580803390928:request_is_match_finished",
-    "WHO ARE PLAYING NOW?": "arn:aws:sns:us-east-1:580803390928:request_current_game"
+    "WHO ARE PLAYING NOW?": "arn:aws:sns:us-east-1:580803390928:request_current_game",
+    "NEXT GAME?": "arn:aws:sns:us-east-1:580803390928:request_next_game"
 }
 
 
