@@ -24,7 +24,8 @@ COMMANDS = {
     ":TABLE_TENNIS_PADDLE_AND_BALL:": "arn:aws:sns:us-east-1:580803390928:request_want_to_play",
     "IS CURRENT GAME FINISHED?": "arn:aws:sns:us-east-1:580803390928:request_is_match_finished",
     "WHO ARE PLAYING NOW?": "arn:aws:sns:us-east-1:580803390928:request_current_game",
-    "NEXT GAME?": "arn:aws:sns:us-east-1:580803390928:request_next_game"
+    "NEXT GAME?": "arn:aws:sns:us-east-1:580803390928:request_next_game",
+    "WE FINISHED":"arn:aws:sns:us-east-1:580803390928:request_finish_the_game"
 }
 
 
