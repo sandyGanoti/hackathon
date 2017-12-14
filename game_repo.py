@@ -27,6 +27,11 @@ class GameRepository(Neo4jRepository):
             success = session.write_transaction(self._finish_game, player_name)
         return success
 
+    def is_current_game_finished(self):
+        with self.driver.session() as session:
+            success = session.write_transaction(self._is_current_game_finished)
+        return success
+
     @staticmethod
     def _create_and_return_game(tx):
         result = tx.run("CREATE (g:Game {current: false, finished: false}) RETURN g")

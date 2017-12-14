@@ -20,7 +20,7 @@ def request_is_match_finished(event, context):
         db_user=NEO4J_USER,
         db_password=NEO4J_PASSWORD
     )
-    finished = repository._is_current_game_finished()
+    finished = repository.is_current_game_finished()
     print("finished: {}".format(finished))
     sns_client = boto3.client('sns')
     sns_message = {"finished": finished}
