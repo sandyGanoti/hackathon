@@ -13,7 +13,7 @@ PING_PONG_CHANNEL = "C8E4EUGGM"
 SLACK_URL = "https://slack.com/api/chat.postMessage"
 
 
-def want_to_play(event, context):
+def response_want_to_play(event, context):
     print(event)
     sns_msg = json.loads(event["Records"][0]["Sns"]["Message"])
     sc = SlackClient(BOT_TOKEN)

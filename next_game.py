@@ -13,7 +13,7 @@ NEO4J_EC2_IP = os.environ["NEO4J_EC2_IP"]
 NEO4J_USER = os.environ["NEO4J_USER"]
 NEO4J_PASSWORD = os.environ["NEO4J_PASSWORD"]
 
-ARN_RES_CURRENT_GAME = "arn:aws:sns:us-east-1:580803390928:response_current_game"
+ARN_RES_NEXT_GAME = "arn:aws:sns:us-east-1:580803390928:response_next_game"
 
 
 def request_next_game(event, context):
@@ -27,7 +27,7 @@ def request_next_game(event, context):
     print(players)
     sns_client = boto3.client('sns')
     sns_response = sns_client.publish(
-            TopicArn=ARN_RES_CURRENT_GAME,
+            TopicArn=ARN_RES_NEXT_GAME,
             Message=json.dumps({"players": players})
         )
 
