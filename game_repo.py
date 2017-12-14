@@ -11,9 +11,9 @@ class GameRepository(Neo4jRepository):
     def join_available_game(self, player_name):
         with self.driver.session() as session:
             game = session.read_transaction(self._get_available_game)
+            if not game:
+                game = session.write_transaction(self._create_and_return_game)
             game_id = game["id"]
-            if not game_id:
-                return False
             success = session.write_transaction(self._join_game, game_id, player_name)
         return success
 
@@ -29,7 +29,7 @@ class GameRepository(Neo4jRepository):
 
     @staticmethod
     def _create_and_return_game(tx):
-        result = tx.run("CREATE (g:Game {current: false}) RETURN g")
+        result = tx.run("CREATE (g:Game {current: false, finished: false}) RETURN g")
         return result.single()["g"]["id"]
 
     @staticmethod
@@ -37,7 +37,7 @@ class GameRepository(Neo4jRepository):
         result = tx.run("Match (g:Game)<-[:PARTICIPATES]-(o:Player), (p:Player) "
                         "WHERE id(g) = {$game_id} "
                         "AND p.name = {$player_name} "
-                        "WITH count(o) num_of_players "
+                        "WITH count(o) num_of_players, g as g, p as p "
                         "WHERE num_of_players < 2 "
                         "CREATE (p)-[r:PARTICIPATES]->(g) "
                         "RETURN r", game_id=game_id, player_name=player_name)
@@ -52,10 +52,33 @@ class GameRepository(Neo4jRepository):
     @staticmethod
     def _get_available_game(tx):
         result = tx.run("MATCH (g:Game)<-[r:PARTICIPATES]-(o:Player) "
-                        "WITH count(o) as num_of_players "
+                        "WITH count(o) as num_of_players, g as g "
                         "WHERE num_of_players < 2 "
                         "RETURN g")
         return result.single()["g"] if result.single() else None
+
+    @staticmethod
+    def _get_number_of_participants(tx, game_id):
+        result = tx.run("MATCH (g:Game)<-[r:PARTICIPATES]-(o:Player) "
+                        "WHERE id(g) = {$game_id} "
+                        "WITH count(o) as num_of_players "
+                        "RETURN num_of_players", game_id=game_id)
+        return result.single()[0]
+
+    @staticmethod
+    def _get_next_game_after(tx, game_id):
+        result = tx.run("MATCH (g1:Game)<-[:NEXT_AFTER]-(g2:Game) "
+                        "WHERE id(g1) = {$game_id} "
+                        "RETURN g2", game_id=game_id)
+        return result.single()["g2"] if result.single() else None
+
+    @staticmethod
+    def _set_next_game_after(tx, game_id):
+        result = tx.run("MATCH (g1:Game) "
+                        "WHERE id(g1) = {$game_id} "
+                        "CREATE (g2:Game {current: false, finished: false})-[:NEXT_AFTER]->(g1) "
+                        "RETURN g2", game_id=game_id)
+        return result.single()["g2"]
 
     @staticmethod
     def _get_players_from_current_game(tx):

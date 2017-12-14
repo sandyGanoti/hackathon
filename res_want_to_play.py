@@ -13,7 +13,7 @@ PING_PONG_CHANNEL = "C8E4EUGGM"
 SLACK_URL = "https://slack.com/api/chat.postMessage"
 
 
-def want_to_play(event, context):
+def response_want_to_play(event, context):
     print(event)
     sns_msg = json.loads(event["Records"][0]["Sns"]["Message"])
     sc = SlackClient(BOT_TOKEN)
@@ -21,7 +21,7 @@ def want_to_play(event, context):
     success = sns_msg["success"]
     user_name = sns_msg["user_name"]
 
-    slack_msg = "@{} you joined the game" if success else "@{} I couldn't find you a game"
+    slack_msg = "<@{}> you joined the game" if success else "<@{}> I couldn't find you a game"
     slack_msg = slack_msg.format(user_name)
     response = sc.api_call(
             "chat.postMessage",
