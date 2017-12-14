@@ -1,24 +1,36 @@
+from __future__ import print_function
 import json
+import os
 
+import boto3
+
+from game_repo import GameRepository
+
+NEO4J_EC2_IP = os.environ["NEO4J_EC2_IP"]
+NEO4J_USER = os.environ["NEO4J_USER"]
+NEO4J_PASSWORD = os.environ["NEO4J_PASSWORD"]
+
+ARN_RES_IS_MATCH_FINISHED = "arn:aws:sns:us-east-1:580803390928:response_is_match_finished"
 
 def request_is_match_finished(event, context):
-    body = {
-        "message": "I am going to write to slack channel",
-        "input": event
-    }
+    print("event: {}".format(event))
+    user_name = event["Records"][0]["Sns"]["Message"]
+    print(user_name)
+    repository = GameRepository(
+        db_instance_ip=NEO4J_EC2_IP,
+        db_user=NEO4J_USER,
+        db_password=NEO4J_PASSWORD
+    )
+    success = repository.join_available_game(user_name)
+    print("success: {}".format(success))
+    sns_client = boto3.client('sns')
+    sns_message = {"success": success, "user_name": user_name}
+    sns_response = sns_client.publish(
+            TopicArn=ARN_RES_IS_MATCH_FINISHED,
+            Message=json.dumps(sns_message)
+        )
 
-    response = {
-        "statusCode": 200,
-        "body": json.dumps(body)
-    }
-
-    return response
-
-    # Use this code if you don't use the http event with the LAMBDA-PROXY
-    # integration
-    """
     return {
-        "message": "Go Serverless v1.0! Ready forn pingo pong",
-        "event": event
+        "statusCode": 200,
+        "body": sns_response
     }
-    """

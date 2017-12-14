@@ -87,6 +87,21 @@ functions:
         topicName: response_current_game
         displayName: Messages to read from db for current game command
 
+  next_game:
+    handler: next_game.request_next_game
+    events:
+      - sns:
+        topicName: request_next_game
+        displayName: Messages to read from slack channel for next game command
+
+  res_next_game:
+    handler: res_next_game.response_next_game
+    events:
+      - sns:
+        topicName: response_next_game
+        displayName: Messages to read from db for next game command
+
+
   neo4j_write:
     handler: neo4j_writer.write
 
