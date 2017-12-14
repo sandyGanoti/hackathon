@@ -101,6 +101,21 @@ functions:
         topicName: response_next_game
         displayName: Messages to read from db for next game command
 
+  finish_the_game:
+    handler: finish_the_game.request_finish_the_game
+    events:
+      - sns:
+        topicName: request_finish_the_game
+        displayName: Messages to read from slack channel for finish the game command
+
+  res_finish_the_game:
+    handler: res_finish_the_game.response_finish_the_game
+    events:
+      - sns:
+        topicName: response_finish_the_game
+        displayName: Messages to read from db for finish the game command
+
+
 
   neo4j_write:
     handler: neo4j_writer.write
