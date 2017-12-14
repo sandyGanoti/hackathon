@@ -6,7 +6,7 @@ class GameRepository(Neo4jRepository):
     def create_game(self):
         with self.driver.session() as session:
             game = session.write_transaction(self._create_and_return_game)
-        return game
+        return game["id"]
 
     def join_available_game(self, player_name):
         with self.driver.session() as session:
@@ -16,6 +16,7 @@ class GameRepository(Neo4jRepository):
                 game = session.write_transaction(self._create_and_return_game)
             else:
                 # there is a current game
+                print("game: {}".format(game))
                 is_available = session.read_transaction(self._get_is_game_available, game["id"])
                 if not is_available:
                     next_game = game
@@ -23,11 +24,13 @@ class GameRepository(Neo4jRepository):
                     while game is not None:
                         next_game = game
                         game = session.read_transaction(self._get_next_game_after, game["id"])
-                        is_available = session.read_transaction(self._get_is_game_available, game["id"])
-                        # if next game is available join it
-                        if is_available:
-                            success = session.write_transaction(self._join_game, game["id"], player_name)
-                            return success
+                        if game:
+                            print("game in loop: {}".format(game))
+                            is_available = session.read_transaction(self._get_is_game_available, game["id"])
+                            # if next game is available join it
+                            if is_available:
+                                success = session.write_transaction(self._join_game, game["id"], player_name)
+                                return success
                     # no available game found, create one
                     game = session.write_transaction(self._create_next_game_after, next_game["id"])
 
@@ -52,7 +55,7 @@ class GameRepository(Neo4jRepository):
     @staticmethod
     def _create_and_return_game(tx):
         result = tx.run("CREATE (g:Game {current: false, finished: false}) RETURN g")
-        return result.single()["g"]["id"]
+        return result.single()["g"]
 
     @staticmethod
     def _join_game(tx, game_id, player_name):
@@ -115,7 +118,7 @@ class GameRepository(Neo4jRepository):
 
     @staticmethod
     def _get_current_game(tx):
-        result = tx.run("MATCH (g:Game)<-[r:PARTICIPATES]-(p:Player) "
+        result = tx.run("MATCH (g:Game) "
                         "WHERE g.current = true "
                         "RETURN g")
         single_result = result.single()
@@ -123,6 +126,7 @@ class GameRepository(Neo4jRepository):
 
     @staticmethod
     def _get_is_game_available(tx, game_id):
+        print("game id={}".format(game_id))
         result = tx.run("MATCH (g:Game)<-[:Participates]-(p:Player) "
                         "WHERE id(g) = {$game_id} "
                         "WITH count(o) as num_of_players "
