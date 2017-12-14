@@ -22,13 +22,13 @@ def request_next_game(event, context):
         db_user=NEO4J_USER,
         db_password=NEO4J_PASSWORD
     )
-    success = repository.finish_current_game(user_name)
-    print("success: {}".format(success))
+    nextId = repository.get_next_after_current()
+    players = repository.get_players_from_game(nextId)
+    print(players)
     sns_client = boto3.client('sns')
-    sns_message = {"success": success}
     sns_response = sns_client.publish(
             TopicArn=ARN_RES_NEXT_GAME,
-            Message=json.dumps(sns_message)
+            Message=json.dumps({"players": players})
         )
 
     return {

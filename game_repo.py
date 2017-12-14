@@ -48,8 +48,14 @@ class GameRepository(Neo4jRepository):
 
     def is_current_game_finished(self):
         with self.driver.session() as session:
-            success = session.write_transaction(self._is_current_game_finished)
+            success = session.read_transaction(self._is_current_game_finished)
         return success
+
+    def get_next_after_current(self):
+        with self.driver.session() as session:
+            current_game_id = session.read_transaction(self._get_current_game)
+            next_game_id = session.read_transaction(self._get_next_game_after, current_game_id)
+        return next_game_id
 
     @staticmethod
     def _create_and_return_game(tx):
