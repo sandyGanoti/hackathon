@@ -78,5 +78,4 @@ class GameRepository(Neo4jRepository):
     def _is_current_game_finished(tx):
         result = tx.run("MATCH (g:Game)<-[r:PARTICIPATES]-(p:Player) "
                         "WHERE g.current = true RETURN g.finished")
-        results = result.records()
-        return [result["p"]["name"] for result in results]
+        return result.single()[0]
