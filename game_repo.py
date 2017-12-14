@@ -63,11 +63,12 @@ class GameRepository(Neo4jRepository):
                         "WHERE num_of_players < 2 "
                         "CREATE (p)-[r:PARTICIPATES]->(g) "
                         "RETURN r", game_id=game_id, player_name=player_name)
-        if not result.single():
+        single_result = result.single()
+        if not single_result:
             print(result)
             return False
-        if not result.single()["r"]:
-            print(result.single())
+        if not single_result["r"]:
+            print(single_result)
             return False
         return True
 
@@ -77,7 +78,8 @@ class GameRepository(Neo4jRepository):
                         "WITH count(o) as num_of_players, g as g "
                         "WHERE num_of_players < 2 "
                         "RETURN g")
-        return result.single()["g"] if result.single() else None
+        single_result = result.single()
+        return single_result["g"] if single_result else None
 
     @staticmethod
     def _get_number_of_participants(tx, game_id):
@@ -92,7 +94,8 @@ class GameRepository(Neo4jRepository):
         result = tx.run("MATCH (g1:Game)<-[:NEXT_AFTER]-(g2:Game) "
                         "WHERE id(g1) = {$game_id} "
                         "RETURN g2", game_id=game_id)
-        return result.single()["g2"] if result.single() else None
+        single_result = result.single()
+        return single_result["g2"] if single_result else None
 
     @staticmethod
     def _create_next_game_after(tx, game_id):
@@ -115,7 +118,8 @@ class GameRepository(Neo4jRepository):
         result = tx.run("MATCH (g:Game)<-[r:PARTICIPATES]-(p:Player) "
                         "WHERE g.current = true "
                         "RETURN g")
-        return result.single()["g"] if result.single() else None
+        single_result = result.single()
+        return single_result["g"] if single_result else None
 
     @staticmethod
     def _get_is_game_available(tx, game_id):
