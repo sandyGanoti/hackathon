@@ -23,7 +23,7 @@ def request_next_game(event, context):
         db_user=NEO4J_USER,
         db_password=NEO4J_PASSWORD
     )
-    players = repository.get_players_from_current_game()
+    players = repository.get_players_from_current_game() #TODO: set the right db method
     print(players)
     sns_client = boto3.client('sns')
     sns_response = sns_client.publish(
