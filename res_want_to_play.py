@@ -1,47 +1,32 @@
 from __future__ import print_function
+
 import json
 import os
-import logging
-import boto3
-
-# Grab the Bot OAuth token from the environment.
 
 from slackclient import SlackClient
+
+# Grab the Bot OAuth token from the environment.
 BOT_TOKEN = os.environ["BOT_TOKEN"]
 BOT_NAME = "Miss Ping"
 PING_PONG_CHANNEL = "C8E4EUGGM"
 
 SLACK_URL = "https://slack.com/api/chat.postMessage"
 
-# topic arn
-ARN_WANT_TO_PLAY = "arn:aws:sns:us-east-1:580803390928:request_want_to_play"
-ARN_IS_MATCH_FINISHED = "arn:aws:sns:us-east-1:580803390928:request_is_match_finished"
-ARN_CURRENT_GAME = "arn:aws:sns:us-east-1:580803390928:request_current_game"
-
 
 def want_to_play(event, context):
     print(event)
-
-    if "challenge" in event:
-        return event["challenge"]
-
-    slack_event = event['event']
-    if "bot_id" in slack_event:
-        return
-
-    text = slack_event['text']
-    channel_id = slack_event['channel']
-    user = slack_event['user']
-    response_text = 'Hi @{} :wave:'.format(user) #TODO: remove?
-    # todo : https://api.slack.com/methods/users.list
-
-    sns_client = boto3.client('sns')
-
-
+    sns_msg = json.loads(event["Records"][0]["Sns"]["Message"])
     sc = SlackClient(BOT_TOKEN)
+
+    success = sns_msg["success"]
+    user_name = sns_msg["user_name"]
+
+    slack_msg = "@{} you joined the game" if success else "@{} I couldn't find you a game"
+    slack_msg = slack_msg.format(user_name)
     response = sc.api_call(
-        "chat.postMessage",
-        channel=PING_PONG_CHANNEL,
-        text="message from db",
-    )
+            "chat.postMessage",
+            channel=PING_PONG_CHANNEL,
+            text=slack_msg,
+        )
+    print(response)
     return response

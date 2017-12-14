@@ -52,7 +52,7 @@ class GameRepository(Neo4jRepository):
     @staticmethod
     def _get_available_game(tx):
         result = tx.run("MATCH (g:Game)<-[r:PARTICIPATES]-(o:Player) "
-                        "WITH count(o) num_of_players "
+                        "WITH count(o) as num_of_players "
                         "WHERE num_of_players < 2 "
                         "RETURN g")
         return result.single()["g"] if result.single() else None
