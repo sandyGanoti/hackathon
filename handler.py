@@ -17,7 +17,7 @@ SLACK_URL = "https://slack.com/api/chat.postMessage"
 
 ARN_RES_WANT_TO_PLAY = "arn:aws:sns:us-east-1:580803390928:response_want_to_play"
 ARN_RES_IS_MATCH_FINISHED = "arn:aws:sns:us-east-1:580803390928:response_is_match_finished"
-ARN_RES_CURRENT_GAME = "arn:aws:sns:us-east-1:580803390928:response_current_game"
+ARN_RES_CURRENT_GAME = "arn:aws:sns:us-east-1:580803390928:fd-sls-dev-response_current_game"
 
 COMMANDS = {
     ":TABLE_TENNIS_PADDLE_AND_BALL:": "arn:aws:sns:us-east-1:580803390928:request_want_to_play",
@@ -54,13 +54,13 @@ def handle_miss_ping(event, context):
         print(userInfo["ok"])
         print(userInfo["user"]["name"])
 
-        if userInfo["ok"] == "true":
+        if userInfo["ok"] is True:
             responseFromSns = sns_client.publish(
                 # TargetArn=arn,
                 # Message=json.dumps({'default': json.dumps(message)}),
                 # MessageStructure='json'
                 TopicArn=COMMANDS[text.upper()],
-                Message=json.dumps(userInfo["user"]["name"])
+                Message=userInfo["user"]["name"]
             )
             print("response from SNS: {}".format(responseFromSns))
             return responseFromSns
