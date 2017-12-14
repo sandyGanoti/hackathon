@@ -36,6 +36,11 @@ class GameRepository(Neo4jRepository):
             game = session.read_transaction(self._get_players_from_current_game)
         return game
 
+    def get_players_from_game(self, game_id):
+        with self.driver.session() as session:
+            players = session.read_transaction(self._get_players_from_game, game_id)
+        return players
+
     def finish_current_game(self, player_name):
         with self.driver.session() as session:
             success = session.write_transaction(self._finish_game, player_name)
@@ -100,6 +105,14 @@ class GameRepository(Neo4jRepository):
         result = tx.run("MATCH (g:Game)<-[r:PARTICIPATES]-(p:Player) "
                         "WHERE g.current = true "
                         "RETURN p")
+        results = result.records()
+        return [result["p"]["name"] for result in results]
+
+    @staticmethod
+    def _get_players_from_game(tx, game_id):
+        result = tx.run("MATCH (g:Game)<-[r:PARTICIPATES]-(p:Player) "
+                        "WHERE id(g) = $game_id "
+                        "RETURN p", game_id=game_id)
         results = result.records()
         return [result["p"]["name"] for result in results]
 
