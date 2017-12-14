@@ -12,19 +12,18 @@ NEO4J_PASSWORD = os.environ["NEO4J_PASSWORD"]
 
 ARN_RES_IS_MATCH_FINISHED = "arn:aws:sns:us-east-1:580803390928:response_is_match_finished"
 
+
 def request_is_match_finished(event, context):
-    print("event: {}".format(event))
-    user_name = event["Records"][0]["Sns"]["Message"]
-    print(user_name)
+    print(event)
     repository = GameRepository(
         db_instance_ip=NEO4J_EC2_IP,
         db_user=NEO4J_USER,
         db_password=NEO4J_PASSWORD
     )
-    success = repository.join_available_game(user_name)
-    print("success: {}".format(success))
+    finished = repository._is_current_game_finished()
+    print("finished: {}".format(finished))
     sns_client = boto3.client('sns')
-    sns_message = {"success": success, "user_name": user_name}
+    sns_message = {"finished": finished}
     sns_response = sns_client.publish(
             TopicArn=ARN_RES_IS_MATCH_FINISHED,
             Message=json.dumps(sns_message)
