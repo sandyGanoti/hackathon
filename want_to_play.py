@@ -5,6 +5,7 @@ import os
 import boto3
 
 from game_repo import GameRepository
+from user_repo import PlayerRepository
 
 NEO4J_EC2_IP = os.environ["NEO4J_EC2_IP"]
 NEO4J_USER = os.environ["NEO4J_USER"]
@@ -17,13 +18,20 @@ def request_want_to_play(event, context):
     print("event: {}".format(event))
     user_name = event["Records"][0]["Sns"]["Message"]
     print(user_name)
-    repository = GameRepository(
+    game_repository = GameRepository(
         db_instance_ip=NEO4J_EC2_IP,
         db_user=NEO4J_USER,
         db_password=NEO4J_PASSWORD
     )
-    success = repository.join_available_game(user_name)
-    print("success: {}".format(success))
+    player_repository = PlayerRepository(
+        db_instance_ip=NEO4J_EC2_IP,
+        db_user=NEO4J_USER,
+        db_password=NEO4J_PASSWORD
+    )
+    player_repository.get_or_create_player(user_name)
+
+    success = game_repository.join_available_game(user_name)
+
     sns_client = boto3.client('sns')
     sns_message = {"success": success, "user_name": user_name}
     sns_response = sns_client.publish(

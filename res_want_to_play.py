@@ -21,7 +21,7 @@ def response_want_to_play(event, context):
     success = sns_msg["success"]
     user_name = sns_msg["user_name"]
 
-    slack_msg = "<@{}> you joined the game" if success else "<@{}> I couldn't find you a game"
+    slack_msg = "<@{}> you joined a game" if success else "<@{}> I couldn't find you a game"
     slack_msg = slack_msg.format(user_name)
     response = sc.api_call(
             "chat.postMessage",

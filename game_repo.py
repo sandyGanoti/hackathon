@@ -3,11 +3,6 @@ from neo4j_repo import Neo4jRepository
 
 class GameRepository(Neo4jRepository):
 
-    def create_game(self):
-        with self.driver.session() as session:
-            game_id = session.write_transaction(self._create_and_return_game)
-        return game_id
-
     def join_available_game(self, player_name):
         with self.driver.session() as session:
             game_id = session.read_transaction(self._get_current_game)
@@ -53,7 +48,7 @@ class GameRepository(Neo4jRepository):
 
     @staticmethod
     def _create_and_return_game(tx):
-        result = tx.run("CREATE (g:Game {current: false, finished: false}) RETURN id(g)")
+        result = tx.run("CREATE (g:Game {current: true, finished: false}) RETURN id(g)")
         return result.single()[0]
 
     @staticmethod
@@ -123,14 +118,16 @@ class GameRepository(Neo4jRepository):
                         "WHERE id(g) = $game_id "
                         "WITH count(p) as num_of_players "
                         "return num_of_players < 2", game_id=game_id)
-        return result.single()[0]
+        _result = result.single()[0]
+        print(_result)
+        return _result
 
     @staticmethod
     def _finish_game(tx, player_name):
         result = tx.run("MATCH (g:Game)<-[:Participates]-(p:Player) "
                         "WHERE g.current = true "
                         "AND p.name = $player_name "
-                        "SET g.current = false "
+                        "SET g.current = false, g.finished = true "
                         "RETURN id(g)", player_name=player_name)
         return True if result.single()[0] else False
 
